@@ -7,7 +7,7 @@ public class GroundCheck : MonoBehaviour
     public GameObject Player;
     public string GroundTag;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.CompareTag(GroundTag))
         {
@@ -15,7 +15,7 @@ public class GroundCheck : MonoBehaviour
         }
     }
 
-    public void OnTriggerExit2D(Collider2D collision)
+    public void OnTriggerExit(Collider collision)
     {
         if (collision.gameObject.CompareTag(GroundTag))
         {

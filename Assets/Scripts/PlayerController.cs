@@ -5,8 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private PlayerControls Inputs;
-    public Rigidbody2D rb;
-    public bool isPlatformer;
+    public Rigidbody rb;
     public bool Jumping;
     public float JumpForce;
     public float MovementSpeed;
@@ -32,10 +31,7 @@ public class PlayerController : MonoBehaviour
 
     public void Start()
     {
-        if (isPlatformer)
-        {
-            Inputs.Platformer.Jump.performed += _ => Jump();
-        }
+        Inputs.Platformer.Jump.performed += _ => Jump();
     }
 
     public void Update()
@@ -77,35 +73,37 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (isPlatformer)
+        if (V_Movement < 0)
         {
-            rb.velocity = new Vector2(H_Movement, rb.velocity.y);
+            V_Movement -= MovementSpeed;
+            if (!Jumping)
+            {
+                State = 1;
+            }
+        }
+        else if (V_Movement > 0)
+        {
+            V_Movement = MovementSpeed;
+            if (!Jumping)
+            {
+                State = 1;
+            }
         }
         else
         {
-            if (V_Movement < 0)
+            V_Movement = 0;
+            if (!Jumping)
             {
-                V_Movement -= MovementSpeed;
-                State = 1;
-            }
-            else if (V_Movement > 0)
-            {
-                V_Movement = MovementSpeed;
-                State = 1;
-            }
-            else
-            {
-                V_Movement = 0;
                 State = 0;
             }
-            rb.velocity = new Vector2(H_Movement, V_Movement);
         }
+        rb.velocity = new Vector3(H_Movement, rb.velocity.y, V_Movement);
     }
     public void Jump()
     {
         if (Jumping == false)
         {
-            rb.velocity = new Vector2(rb.velocity.x, JumpForce);
+            rb.velocity = new Vector3(rb.velocity.x, JumpForce, rb.velocity.z);
             Jumping = true;
             State = 2;
         }
