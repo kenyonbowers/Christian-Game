@@ -164,7 +164,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3858690936126116416}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.035, y: 0.47, z: 0}
+  m_LocalPosition: {x: 0, y: 0.47, z: 0}
   m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -474,7 +474,11 @@ MonoBehaviour:
   isPlatformer: 1
   Jumping: 0
   JumpForce: 6
-  MovementSpeed: 5
+  MovementSpeed: 3
+  State: 0
+  Mode: 0
+  HeadObject: {fileID: 3858690936126116416}
+  BodyObject: {fileID: 779416061283273001}
 --- !u!50 &4168633918512263664
 Rigidbody2D:
   serializedVersion: 4

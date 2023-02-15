@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
     public bool Jumping;
     public float JumpForce;
     public float MovementSpeed;
+    public int State;
+    public int Mode;
+    public GameObject HeadObject;
+    public GameObject BodyObject;
 
     private void Awake()
     {
@@ -37,6 +41,7 @@ public class PlayerController : MonoBehaviour
     public void Update()
     {
         Move();
+        UpdateAnimations();
     }
 
     public void Move()
@@ -46,33 +51,53 @@ public class PlayerController : MonoBehaviour
         if (H_Movement < 0)
         {
             H_Movement -= MovementSpeed;
+            HeadObject.GetComponent<SpriteRenderer>().flipX = true;
+            BodyObject.GetComponent<SpriteRenderer>().flipX = true;
+            if (!Jumping)
+            {
+                State = 1;
+            }
         }
         else if (H_Movement > 0)
         {
             H_Movement = MovementSpeed;
+            HeadObject.GetComponent<SpriteRenderer>().flipX = false;
+            BodyObject.GetComponent<SpriteRenderer>().flipX = false;
+            if (!Jumping)
+            {
+                State = 1;
+            }
         }
         else
         {
             H_Movement = 0;
+            if (!Jumping)
+            {
+                State = 0;
+            }
         }
 
-        if (V_Movement < 0)
+        if (isPlatformer)
         {
-            V_Movement -= MovementSpeed;
-        }
-        else if (V_Movement > 0)
-        {
-            V_Movement = MovementSpeed;
+            rb.velocity = new Vector2(H_Movement, rb.velocity.y);
         }
         else
         {
-            V_Movement = 0;
-        }
-
-        if(isPlatformer){
-            rb.velocity = new Vector2(H_Movement, rb.velocity.y);
-        }
-        else{
+            if (V_Movement < 0)
+            {
+                V_Movement -= MovementSpeed;
+                State = 1;
+            }
+            else if (V_Movement > 0)
+            {
+                V_Movement = MovementSpeed;
+                State = 1;
+            }
+            else
+            {
+                V_Movement = 0;
+                State = 0;
+            }
             rb.velocity = new Vector2(H_Movement, V_Movement);
         }
     }
@@ -82,6 +107,11 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, JumpForce);
             Jumping = true;
+            State = 2;
         }
+    }
+    public void UpdateAnimations()
+    {
+        BodyObject.GetComponent<Animator>().SetInteger("State", State);
     }
 }
