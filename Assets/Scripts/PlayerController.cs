@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour
     public int Mode;
     public GameObject HeadObject;
     public GameObject BodyObject;
+    public GameObject ShadowObject;
+    public Mesh IdleMesh;
+    public Mesh JumpingMesh;
 
     private void Awake()
     {
@@ -42,6 +45,10 @@ public class PlayerController : MonoBehaviour
 
     public void Move()
     {
+        if (!Jumping)
+        {
+            ShadowObject.GetComponent<MeshFilter>().mesh = IdleMesh;
+        }
         float H_Movement = Inputs.Default.H_Movement.ReadValue<float>();
         float V_Movement = Inputs.TopDown.V_Movement.ReadValue<float>();
         if (H_Movement < 0)
@@ -49,55 +56,48 @@ public class PlayerController : MonoBehaviour
             H_Movement -= MovementSpeed;
             HeadObject.GetComponent<SpriteRenderer>().flipX = true;
             BodyObject.GetComponent<SpriteRenderer>().flipX = true;
-            if (!Jumping)
-            {
-                State = 1;
-            }
+            ShadowObject.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
         else if (H_Movement > 0)
         {
             H_Movement = MovementSpeed;
             HeadObject.GetComponent<SpriteRenderer>().flipX = false;
             BodyObject.GetComponent<SpriteRenderer>().flipX = false;
-            if (!Jumping)
-            {
-                State = 1;
-            }
+            ShadowObject.transform.localRotation = Quaternion.Euler(0, 180, 0);
         }
         else
         {
             H_Movement = 0;
-            if (!Jumping)
-            {
-                State = 0;
-            }
         }
 
         if (V_Movement < 0)
         {
             V_Movement -= MovementSpeed;
-            if (!Jumping)
-            {
-                State = 1;
-            }
         }
         else if (V_Movement > 0)
         {
             V_Movement = MovementSpeed;
+        }
+        else
+        {
+            V_Movement = 0;
+        }
+        rb.velocity = new Vector3(H_Movement, rb.velocity.y, V_Movement);
+
+        if (H_Movement > 0 || H_Movement < 0 || V_Movement > 0 || V_Movement < 0)
+        {
             if (!Jumping)
             {
                 State = 1;
             }
         }
-        else
+        else if (H_Movement == 0 && V_Movement == 0)
         {
-            V_Movement = 0;
             if (!Jumping)
             {
                 State = 0;
             }
         }
-        rb.velocity = new Vector3(H_Movement, rb.velocity.y, V_Movement);
     }
     public void Jump()
     {
@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector3(rb.velocity.x, JumpForce, rb.velocity.z);
             Jumping = true;
+            ShadowObject.GetComponent<MeshFilter>().mesh = JumpingMesh;
             State = 2;
         }
     }
